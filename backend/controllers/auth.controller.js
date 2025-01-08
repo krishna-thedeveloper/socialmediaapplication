@@ -17,6 +17,9 @@ export const signup = async (req,res)=>{
         if(existingEmail){
             return res.status(400).json({"error":"email already exists"})
         }
+        if(password<6){
+            return res.status(400).json({"error":"password must be atleat 6 characters long"})
+        }
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(password, salt)
         
@@ -43,9 +46,51 @@ export const signup = async (req,res)=>{
 }
 
 export const login = async (req,res)=>{
-    res.json({"msg":"hello"})
+    try{
+        const {username,password} = req.body;
+
+        
+        const user = await User.findOne({username})
+        const isPasswordCorrect = await bcrypt.compare(password,user?.password || "")
+        if(!user || !isPasswordCorrect){
+            return res.status(400).json({"error":"Invalid Username or password"})
+        }
+        generateTokenAndSetCookie(user._id,res)
+        res.status(200).json({
+            id:user._id,
+            message:"Login success !"
+        })
+    }catch(error){
+        console.log(error.message)
+        res.status(500).json({"error":"Internal server error !"})
+
+    }
 }
 
 export const logout = async (req,res)=>{
-    res.json({"msg":"hello"})
+    try{
+        res.cookie("jwt","",{maxAge:0})
+        res.status(200).json({
+            message:"Logout success"
+        })
+    }catch(error){
+        console.log(error.message)
+        res.status(500).json({"error":"Internal server error !"})
+
+    }
+}
+
+
+export const getme = async (req,res)=>{
+    try{
+
+        res.status(200).json({
+            ...req.user,
+            message:"get me"
+        })
+    }catch(error){
+        console.log(error.message)
+        res.status(500).json({"error":"Internal server error !"})
+
+    }
 }
