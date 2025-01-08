@@ -31,10 +31,8 @@ export const signup = async (req,res)=>{
         if(newUser){
             
             generateTokenAndSetCookie(newUser._id,res)
-            
-        
             await newUser.save()
-            console.log("hbjhv")
+            
             res.status(201).json({message:"user created successfully"})
         }else{
             res.status(400).json({"error":"Invalid user data"})
@@ -84,10 +82,7 @@ export const logout = async (req,res)=>{
 export const getme = async (req,res)=>{
     try{
 
-        res.status(200).json({
-            ...req.user,
-            message:"get me"
-        })
+        res.status(200).json(req.user)
     }catch(error){
         console.log(error.message)
         res.status(500).json({"error":"Internal server error !"})
