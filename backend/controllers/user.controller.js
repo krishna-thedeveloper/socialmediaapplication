@@ -6,7 +6,7 @@ import {v2 as cloudinary} from 'cloudinary'
 export const getUserProfile = async (req,res)=>{
     const {username} = req.params
     try{
-        const user = User.findOne({username}).select("-password")
+        const user = await User.findOne({username}).select("-password")
         if(!user){
             return res.status(404).json({error:"user not found"})
         }
@@ -105,14 +105,14 @@ export const updateUser = async (req,res)=>{
                 if(user.profileImg){
                     await cloudinary.uploader.destroy(user.profileImg.split('/')).pop().split('.')[0]
                 }
-                const uploadedResponse = await cloudinary.uploader(profileImg)
+                const uploadedResponse = await cloudinary.uploader.upload(profileImg)
                 profileImg = uploadedResponse.secure_url
             }
             if(coverImg){
                 if(user.coverImg){
                     await cloudinary.uploader.destroy(user.coverImg.split('/')).pop().split('.')[0]
                 }
-                const uploadedResponse = await cloudinary.uploader(coverImg)
+                const uploadedResponse = await cloudinary.uploader.upload(coverImg)
                 coverImg = uploadedResponse.secure_url
             }
 

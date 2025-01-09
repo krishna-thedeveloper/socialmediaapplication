@@ -2,6 +2,7 @@ import express from "express"
 import dotenv from "dotenv"
 import authRouter from './routes/auth.routes.js'
 import userRouter from './routes/user.routes.js'
+import postRouter from './routes/post.routes.js'
 import connectMongo from './db/connectMongoDB.js'
 import cookies from 'cookie-parser'
 import {v2 as cloudinary} from 'cloudinary'
@@ -19,6 +20,7 @@ app.use(cookies())
 app.use(express.urlencoded({extended:true}))
 app.use('/api/auth',authRouter)
 app.use('/api/users',userRouter)
+app.use('/api/posts',postRouter)
 
 app.listen(process.env.PORT,()=>{
     console.log(`Backend started at Port : ${process.env.PORT}`)
