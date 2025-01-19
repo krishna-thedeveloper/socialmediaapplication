@@ -26,7 +26,11 @@ const postSchema = new mongoose.Schema({
             ref:'User',
             required:true
         }
-    }]
+    }],
+    views:{
+        type:String,
+        default:'0'
+    },
 },{timestamps:true})
 
 const Post = mongoose.model("Post",postSchema)

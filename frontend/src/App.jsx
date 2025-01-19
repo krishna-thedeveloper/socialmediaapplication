@@ -1,31 +1,45 @@
 import Home from "./pages/Home";
-import Sidebar from "./pages/LeftSidebar";
+import LeftSidebar from "./components/LeftSidebar";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Sugguestbar from "./pages/RightSidebar";
+import RightSidebar from "./components/RightSidebar";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
-import Bottombar from "./pages/Bottombar";
+import Bottombar from "./components/Bottombar";
+import { useEffect, useState } from "react";
+import Messages from "./pages/Messages";
+import Notifications from "./pages/Notifications";
+import { useUser } from "./context/UserContext";
+import ProfileUser from "./pages/ProfileUser";
+import Profile from "./pages/Profile";
 
-let islogin=true;
+
 function App() {
-  return (
+  const {  isLoggedIn } = useUser()
 
-     <div className="text-white h-screen w-screen bg-black">
-      <div className="flex h-screen w-screen ">
-      {islogin && <Sidebar />}
-      <BrowserRouter>
+  return (
+    <BrowserRouter>
+     <div className="text-white min-h-screen w-screen bg-black">
+      {isLoggedIn && <LeftSidebar/>}
+      <div className="flex min-h-screen w-screen ">
+      
+      
       <Routes>
         <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/" element={islogin ? <Home />:<Signup />} />
+        <Route path="/login" element={!isLoggedIn && <Login  />} />
+        <Route path="/" element={isLoggedIn ? <Home />:<Signup />} />
+        <Route path="/profile" element={isLoggedIn ? <Profile />:<Signup />} />
+        <Route path="/messages" element={isLoggedIn ? <Messages /> :<Signup  />} />
+        <Route path="/notifications" element={isLoggedIn ? <Notifications />:<Signup />} />
+        <Route path="/profile/:username" element={isLoggedIn ? <ProfileUser />:<Signup />} />
       </Routes>
-      </BrowserRouter>
-      {islogin && <Sugguestbar />}
-      </div>
       
-      <Bottombar />
-     </div>
-    
+      
+      </div>
+      {isLoggedIn && <RightSidebar />}
+      {isLoggedIn && < Bottombar />}
+     
+    </div>
+    </BrowserRouter>
   );
 }
 

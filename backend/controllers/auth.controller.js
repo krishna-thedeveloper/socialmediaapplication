@@ -82,10 +82,10 @@ export const logout = async (req,res)=>{
 export const getme = async (req,res)=>{
     try{
 
-        res.status(200).json(req.user)
+        return res.status(200).json(req.user)
     }catch(error){
         console.log(error.message)
-        res.status(500).json({"error":"Internal server error !"})
+        return res.status(500).json({"error":"Internal server error !"})
 
     }
 }

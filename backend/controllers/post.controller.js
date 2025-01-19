@@ -73,11 +73,36 @@ export const commentPost = async (req,res)=>{
         post.comments.push(comment)
         await post.save()
 
+        const newNotification = new Notification({
+            type:'comment',
+            from:userId,
+            text,
+            to:post.user
+        })
+        await  newNotification.save()
+
         return res.status(200).json(post)
     }catch(error){
         console.log(error.message)
         return res.status(500).json({error:"Internal server error"})
     }
+}
+export const getPostComments =async (req,res)=>{
+    try{
+        
+        const postId = req.params.id
+        const post =await Post.findById(postId).populate({
+            path:"comments.user",
+            select:"-password -email"
+            })
+        const comments = post.comments
+            
+        return res.status(200).json({comments:comments,numberOfComments:comments.length})
+    }catch(error){
+        console.log(error)
+        return {"error":"something went worong"}
+    }
+    
 }
 
 export const likeUnlikePost = async (req,res)=>{
@@ -86,6 +111,7 @@ export const likeUnlikePost = async (req,res)=>{
         const userId = req.user._id
 
         const post =await Post.findById(postId)
+        let numberOfLikes = post.likes.length
         if(!post){
             return res.status(404).json({error:"Post not found"})
         }
@@ -94,9 +120,10 @@ export const likeUnlikePost = async (req,res)=>{
         const isLiked = post.likes.includes(userId)
         if(isLiked){
             await Post.findByIdAndUpdate(postId,{ $pull :{likes:userId}})
-            await User.findByIdAndUpdate(userId,{ $pull :{likesPosts:postId}})
+            await User.findByIdAndUpdate(userId,{ $pull :{likedPosts:postId}})
             //await User.updateOne({userId},{$pull:{$likedPosts:postId}})
-            return res.status(200).json({message:"unliked successfully !"})
+            numberOfLikes -=1
+            return res.status(200).json({numberOfLikes,isLiked:false})
         }else{
             await Post.findByIdAndUpdate(postId,{ $push :{likes:userId}})
             await User.findByIdAndUpdate(userId,{ $push :{likedPosts:postId}})
@@ -107,7 +134,8 @@ export const likeUnlikePost = async (req,res)=>{
                 to:post.user
             })
             await  newNotification.save()
-            return res.status(200).json({message:"liked successfully !"})
+            numberOfLikes +=1
+            return res.status(200).json({numberOfLikes,isLiked:true})
         }
     }catch(error){
         console.log(error.message)

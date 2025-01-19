@@ -7,6 +7,9 @@ import notificationRoutes from './routes/notification.route.js'
 import connectMongo from './db/connectMongoDB.js'
 import cookies from 'cookie-parser'
 import {v2 as cloudinary} from 'cloudinary'
+import cors from 'cors'
+import { protectRoute } from "./middleware/protectRoute.js"
+import { search } from "./controllers/search.controller.js"
 const app = express()
 dotenv.config()
 
@@ -17,13 +20,25 @@ cloudinary.config({
 })
 
 app.use(express.json())
+app.use(cors({
+    origin: 'http://localhost:5173',  
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+    allowedHeaders: ['Content-Type', 'Authorization'], 
+    credentials: true, 
+  }));
 app.use(cookies())
 app.use(express.urlencoded({extended:true}))
 app.use('/api/auth',authRoutes)
 app.use('/api/users',userRoutes)
 app.use('/api/posts',postRoutes)
 app.use('/api/notifications',notificationRoutes)
+app.get('/api/auth',protectRoute,(req,res)=>{
+return res.status(200).json({message:"Authenticated"})
+})
 
+
+app.post('/api/search',protectRoute,search );
+  
 app.listen(process.env.PORT,()=>{
     console.log(`Backend started at Port : ${process.env.PORT}`)
     connectMongo()

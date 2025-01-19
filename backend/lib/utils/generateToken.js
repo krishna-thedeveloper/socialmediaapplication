@@ -9,7 +9,7 @@ export const generateTokenAndSetCookie = (userId,res)=>{
         maxAge:24*60*60*1000,
         httpOnly:true,
         sameSite:"strict",
-        secure: process.env.NODE_ENV == "producion"
+        secure: process.env.NODE_ENV == "production"
     })
 
 }

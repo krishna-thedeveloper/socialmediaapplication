@@ -7,6 +7,11 @@ export default {
   theme: {
     extend: {},
   },
+  variants: {
+    extend: {
+      scrollbar: ['responsive'],
+    },
+  },
   plugins: [],
 }
 
