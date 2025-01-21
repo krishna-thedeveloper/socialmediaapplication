@@ -93,7 +93,7 @@ const ProfileUser = () => {
                         <h6>@{user.username}</h6>
                     </div>
                     <div className="flex gap-4 text-lg">
-                        <span>{user.following} following</span> <span>{user.followers} followers</span>
+                        <span>{user.following.length} following</span> <span>{user.followers.length} followers</span>
                     </div>
                 </div>
                 <div className="flex gap-5 text-xl ps-3 pb-2">

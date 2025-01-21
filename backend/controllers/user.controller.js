@@ -26,28 +26,28 @@ export const getUserProfile = async (req,res)=>{
 
 export  const followunfollowuser = async (req,res)=>{
     try{
-        const {id}=req.params
-        const userTomodify = await User.findById(id)
+        const {username}=req.params
+        const userToModify = await User.findOne({username})
         const currentUser = await User.findById(req.user._id);
-        if(id==req.user._id.toString()){
+        if(userToModify._id==req.user._id.toString()){
             return res.status(400).json({error:"you can't follow or unfollow yourself"})
         }
-        if(!userTomodify || !currentUser){
-            return res.status(400).json({error:"user not found"})
+        if(!userToModify || !currentUser){
+            return res.status(404).json({error:"user not found"})
         }
-        const isFollowing = currentUser.following.includes(id)
+        const isFollowing = currentUser.following.includes(userToModify._id)
         if(isFollowing){
-            await User.findByIdAndUpdate(id,{ $pull :{followers:currentUser._id}})
-            await User.findByIdAndUpdate(currentUser._id,{ $pull :{following:id}})
+            await User.findByIdAndUpdate(userToModify._id,{ $pull :{followers:currentUser._id}})
+            await User.findByIdAndUpdate(currentUser._id,{ $pull :{following:userToModify._id}})
             return res.status(200).json({message:"unfollowed successfully !"})
         }else{
-            await User.findByIdAndUpdate(id,{ $push :{followers:currentUser._id}})
-            await User.findByIdAndUpdate(currentUser._id,{ $push :{following:id}})
+            await User.findByIdAndUpdate(userToModify._id,{ $push :{followers:currentUser._id}})
+            await User.findByIdAndUpdate(currentUser._id,{ $push :{following:userToModify._id}})
 
             const newNotification = new Notification({
                 type:'follow',
                 from:currentUser._id,
-                to:id
+                to:userToModify._id
             })
             await  newNotification.save()
             return res.status(200).json({message:"followed successfully !"})

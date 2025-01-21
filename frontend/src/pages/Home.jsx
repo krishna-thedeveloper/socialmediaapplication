@@ -18,10 +18,7 @@ const Home = () => {
   // Use the useFetch hook to fetch posts based on the feedType
   const { data: posts, isLoading, isError, error } = useFetch(`/api/posts/${getEndpoint()}`, { credentials: 'include' });
 
-  // Handle loading and error states
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+
 
   if (isError) {
     return <div>Error: {error?.message || 'Something went wrong'}</div>;
@@ -52,6 +49,10 @@ const Home = () => {
             post={post}
           />
         ))}
+        {!isLoading && !isError && posts.length==0 && <div className='mt-5'>No posts</div>}
+        { isLoading && <div className='flex justify-center items-center mt-5'>
+        <div className='animate-spin w-10 h-10 p-2 border-t-2 border-t-slate-200 rounded-full '> </div>
+        </div>}
       </div>
     </div>
   );

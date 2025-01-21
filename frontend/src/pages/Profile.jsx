@@ -8,8 +8,8 @@ const Profile = () => {
   const [posts, setPosts] = useState([]); // Initialize posts as an array
   const [postType, setPostType] = useState('posts');
   const [activeCommentPostId, setActiveCommentPostId] = useState(null);
-  const [user,setUser] = useState("")
-  const {user:userdata}=useUser()
+  const [isLoading,setIsLoading] = useState(false)
+  const {user}=useUser()
   //const { data:user, isLoading, isError, error } = useFetch('/api/auth/me', { credentials: 'include' });
   
   // Determine endpoint based on postType and user info
@@ -23,29 +23,17 @@ const Profile = () => {
 
   // Get posts based on user and postType
   const getPosts = async () => {
+    setIsLoading(true)
     const response = await fetch(`http://localhost:3000/api/posts/${getEndpoint()}`, { credentials: 'include' })
     const data = await response.json()
 
     if (data) {
       setPosts(data);
     }
+    setIsLoading(false)
   };
 
-  // Get user data
-  const getMe = async () => {
-    const response = await fetch(`http://localhost:3000/api/auth/me`, { credentials: 'include' })
-    const data = await response.json()
 
-
-    if (data) {
-      setUser(data);
-    }
-  };
-
-  useEffect(() => {
-
-    getMe(); // Fetch user data on mount
-  }, []); // Only once on mount
 
   useEffect(() => {
     if (user && user._id) {
@@ -57,9 +45,7 @@ const Profile = () => {
     return <div>Loading user data...</div>;
   }
 
-  if (!posts) {
-    return <div>Loading posts...</div>;
-  }
+
 
   return (
     <div className="max-sm:pb-20 flex flex-col flex-1 lg:ml-60 lg:mr-72 md:ml-20 overflow-y-auto mt-2">
@@ -80,7 +66,7 @@ const Profile = () => {
             <h6>@{user.username}</h6>
           </div>
           <div className="flex gap-4 text-lg">
-            <span>{user.following} following</span> <span>{user.followers} followers</span>
+            <span>{user.following.length} following</span> <span>{user.followers.length} followers</span>
           </div>
         </div>
         <div className="flex gap-5 text-xl justify-around border-b-2">
@@ -98,9 +84,9 @@ const Profile = () => {
           </div>
         </div>
       </div>
-      {!posts.length ? (
+      {!posts.length && !isLoading && (
         <div>No posts</div>
-      ) : (
+      )} { posts.length>0 && (
         <div className="flex flex-col items-center">
           {posts.map((post) => (
             <Post
@@ -110,8 +96,13 @@ const Profile = () => {
               activeCommentPostId={activeCommentPostId}
             />
           ))}
+          
         </div>
       )}
+      {isLoading &&
+      <div className='flex justify-center'>
+        <div className='animate-spin w-10 h-10 p-2 border-t-2 border-t-slate-200 rounded-full '> </div>
+        </div>}
     </div>
   );
 };

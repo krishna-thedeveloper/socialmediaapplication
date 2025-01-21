@@ -33,7 +33,7 @@ app.use('/api/users',userRoutes)
 app.use('/api/posts',postRoutes)
 app.use('/api/notifications',notificationRoutes)
 app.get('/api/auth',protectRoute,(req,res)=>{
-return res.status(200).json({message:"Authenticated"})
+return res.status(200).json(req.user)
 })
 
 
