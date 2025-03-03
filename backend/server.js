@@ -10,6 +10,7 @@ import {v2 as cloudinary} from 'cloudinary'
 import cors from 'cors'
 import { protectRoute } from "./middleware/protectRoute.js"
 import { search } from "./controllers/search.controller.js"
+import reportRoutes from './routes/report.route.js'
 const app = express()
 dotenv.config()
 
@@ -35,7 +36,7 @@ app.use('/api/notifications',notificationRoutes)
 app.get('/api/auth',protectRoute,(req,res)=>{
 return res.status(200).json(req.user)
 })
-
+app.use("/api/reports", reportRoutes);
 
 app.post('/api/search',protectRoute,search );
   
