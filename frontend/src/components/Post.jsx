@@ -83,31 +83,39 @@ const Post = ({ post, setActiveCommentPostId, activeCommentPostId, user }) => {
 
       {/* Report Modal */}
       {showReportModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className=" p-5 rounded-lg w-96 bg-black">
-            <div className="flex justify-between ">
-              <h3 className="text-lg font-semibold">Report Post</h3>
-              <button onClick={() => setShowReportModal(false)}>
-                <XMarkIcon className="h-5 w-5 text-gray-500" />
-              </button>
-            </div>
-            <select
-              className="w-full p-2 mt-3 border rounded-md bg-inherit"
-              onChange={(e) => setReportReason(e.target.value)}
-            >
-              <option className="bg-inherit" value="">Select a reason</option>
-              <option className="bg-inherit" value="spam">Spam</option>
-              <option className="bg-inherit" value="harassment">Harassment</option>
-              <option className="bg-inherit" value="misinformation">Misinformation</option>
-            </select>
-            <div className="flex justify-end mt-4">
-              <button onClick={handleReport} className="bg-red-500 text-white px-4 py-2 rounded-md">
-                Submit Report
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+  <div 
+    className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" 
+    onClick={() => setShowReportModal(false)}
+  >
+    <div 
+      className="p-5 rounded-lg w-96 bg-black relative"
+      onClick={(e) => e.stopPropagation()} // Prevents modal from closing when clicking inside
+    >
+      <div className="flex justify-between">
+        <h3 className="text-lg font-semibold">Report Post</h3>
+        <button onClick={() => setShowReportModal(false)}>
+          <XMarkIcon className="h-5 w-5 text-gray-500" />
+        </button>
+      </div>
+      <select
+        className="w-full p-2 mt-3 border rounded-md bg-inherit"
+        onChange={(e) => setReportReason(e.target.value)}
+      >
+        <option className="bg-inherit" value="">Select a reason</option>
+        <option className="bg-inherit" value="spam">Spam</option>
+        <option className="bg-inherit" value="harassment">Harassment</option>
+        <option className="bg-inherit" value="misinformation">Misinformation</option>
+      </select>
+      <div className="flex justify-end mt-4">
+        <button onClick={handleReport} className="bg-red-500 text-white px-4 py-2 rounded-md">
+          Submit Report
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
     </div>
   );
 };

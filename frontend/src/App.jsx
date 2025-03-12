@@ -11,7 +11,7 @@ import Notifications from "./pages/Notifications";
 import { useUser } from "./context/UserContext";
 import ProfileUser from "./pages/ProfileUser";
 import Profile from "./pages/Profile";
-
+import React from "react";
 
 function App() {
   const {  isLoggedIn } = useUser()
