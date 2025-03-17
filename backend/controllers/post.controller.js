@@ -2,35 +2,52 @@ import Post from "../models/post.model.js"
 import User from "../models/user.model.js"
 import Notification from "../models/notification.model.js"
 import {v2 as cloudinary} from 'cloudinary'
+import fs from "fs"; // Import the file system module
 
-export const createPost = async (req,res)=>{
-    try{
-        const {text} = req.body
-        let {img} = req.body
-        const userId = req.user._id.toString()
-        const user = await User.findById(userId)
-        if(!user){
-            return res.status(404).json({error:"user not found"})
-        }
-        if(!text && !img){
-            return res.status(400).json({error:"Post must have text or image"})
-        }
-        if(img){
-            const uploadedResponse = await cloudinary.uploader.upload(img)
-            img = uploadedResponse.secure_url
-        }
-        const newPost = new Post({
-            user:userId,
-            text,
-            img
-        })
-        await newPost.save()
-        return res.status(201).json(newPost)
-    }catch(error){
-        return res.status(500).json({error:"Internal server error"})
+
+export const createPost = async (req, res) => {
+  try {
+    const { text } = req.body; // Access text from req.body
+    const userId = req.user._id.toString(); // Access user ID from req.user
+    const imageFile = req.file; // Access uploaded file from req.file
+
+    // Validate user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
     }
-}
 
+    // Validate post content
+    if (!text && !imageFile) {
+      return res.status(400).json({ error: "Post must have text or image" });
+    }
+
+    let imageUrl;
+    if (imageFile) {
+      // Upload image to Cloudinary
+      const uploadedResponse = await cloudinary.uploader.upload(imageFile.path, {
+        folder: "posts", // Optional: Organize images in a folder
+      });
+      imageUrl = uploadedResponse.secure_url; // Get the URL of the uploaded image
+
+      // Delete the temporary file after upload
+      fs.unlinkSync(imageFile.path);
+    }
+
+    // Create and save the new post
+    const newPost = new Post({
+      user: userId,
+      text,
+      img: imageUrl, // Save the Cloudinary URL
+    });
+    await newPost.save();
+
+    return res.status(201).json(newPost);
+  } catch (error) {
+    console.error("Error in createPost:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
 export const deletePost = async (req,res)=>{
     try{
         const post = await Post.findById(req.params.id)

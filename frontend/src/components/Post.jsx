@@ -39,7 +39,7 @@ const Post = ({ post, setActiveCommentPostId, activeCommentPostId, user }) => {
       <div className="flex justify-between">
         <div>
           <span className="text-white text-2xl">{post.user.fullName}</span>
-          <span className="text-slate-700 text-xl">@{post.user.username} • {post.time || "1h"}</span>
+          <span className="text-slate-500 text-xl">@{post.user.username} • {post.createdAt?.split("T")[0]}</span>
         </div>
         <button onClick={() => setShowMenu(!showMenu)} className="p-1">
           <EllipsisVerticalIcon className="h-6 w-6 text-gray-400" />
@@ -53,7 +53,7 @@ const Post = ({ post, setActiveCommentPostId, activeCommentPostId, user }) => {
           </button>
         </div>
       )}
-
+{post.img && <img src={post.img} alt={post.title} className="w-full h-60 object-cover mt-2 rounded-lg" />}
       <div className="p-3">{post.text}</div>
       <div className="flex justify-around">
         <PostFooter

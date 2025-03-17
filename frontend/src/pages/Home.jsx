@@ -1,27 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import Post from '../components/Post';
+import CrowdfundPost from '../components/CrowdfundPost'; // Import crowdfunding post component
 import useFetch from '../fetchdata/useFetch';
+import { useNewpost } from '../context/NewpostContext';
+import NewPost from '../components/NewPost';
 
 const Home = () => {
   const [feedType, setFeedType] = useState('for you');
   const [activeCommentPostId, setActiveCommentPostId] = useState(null);
+  const { newPostShow, setNewPostShow } = useNewpost();
 
   // Determine the endpoint based on the feedType
-  const getEndpoint = () => {
-    if (feedType === 'following') {
-      return 'following';
-    } else {
-      return 'all';
-    }
-  };
+  const getEndpoint = () => (feedType === 'following' ? 'following' : 'all');
 
-  // Use the useFetch hook to fetch posts based on the feedType
-  const { data: posts, isLoading, isError, error } = useFetch(`/api/posts/${getEndpoint()}`, { credentials: 'include' });
+  // Fetch normal posts
+  const { data: posts, isLoading: postsLoading, isError: postsError, error: postsErrorMsg } = 
+    useFetch(`/api/posts/${getEndpoint()}`, { credentials: 'include' });
 
+  // Fetch crowdfunding posts
+  const { data: crowdfundPosts, isLoading: cfLoading, isError: cfError, error: cfErrorMsg } = 
+    useFetch(`/api/crowdfunds/all`, { credentials: 'include' });
 
+  // Merge posts and crowdfunding campaigns into one feed
+  const combinedPosts = [...(posts || []), ...(crowdfundPosts || [])].sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt) // Sort by latest
+  );
 
-  if (isError) {
-    return <div>Error: {error?.message || 'Something went wrong'}</div>;
+  if (postsError || cfError) {
+    return <div>Error: {postsErrorMsg?.message || cfErrorMsg?.message || 'Something went wrong'}</div>;
   }
 
   return (
@@ -40,20 +46,30 @@ const Home = () => {
           following
         </div>
       </div>
+      
       <div className="flex flex-col items-center">
-        {posts?.map((post) => (
-          <Post
-            setActiveCommentPostId={setActiveCommentPostId}
-            activeCommentPostId={activeCommentPostId}
-            key={post.id}  // Using a unique identifier for key
-            post={post}
-          />
-        ))}
-        {!isLoading && !isError && posts.length==0 && <div className='mt-5'>No posts</div>}
-        { isLoading && <div className='flex justify-center items-center mt-5'>
-        <div className='animate-spin w-10 h-10 p-2 border-t-2 border-t-slate-200 rounded-full '> </div>
-        </div>}
+        {combinedPosts?.map((post) =>
+          post.goalAmount ? ( // Check if it's a crowdfunding post
+            <CrowdfundPost key={post._id} post={post} />
+          ) : (
+            <Post 
+              key={post._id}
+              post={post}
+              setActiveCommentPostId={setActiveCommentPostId}
+              activeCommentPostId={activeCommentPostId}
+            />
+          )
+        )}
+
+        {!postsLoading && !cfLoading && combinedPosts.length === 0 && <div className='mt-5'>No posts</div>}
+        {(postsLoading || cfLoading) && (
+          <div className='flex justify-center items-center mt-5'>
+            <div className='animate-spin w-10 h-10 p-2 border-t-2 border-t-slate-200 rounded-full'></div>
+          </div>
+        )}
       </div>
+
+      {newPostShow && <NewPost />}
     </div>
   );
 };

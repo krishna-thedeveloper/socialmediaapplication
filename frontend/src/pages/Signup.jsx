@@ -17,7 +17,7 @@ const Signup = () => {
       console.log(formValues); // Log the form values for debugging
   
       // Send the form values directly in the body of the fetch request
-      const response = await fetch("http://localhost:3000/api/auth/login", {
+      const response = await fetch("http://localhost:3000/api/auth/signup", {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ const Signup = () => {
       console.log(data); // Log the response data
   
   
-      if (data) {
+      if (response.ok && data) {
         login(data); // Update login state
         navigate('/'); // Redirect to homepage
       }

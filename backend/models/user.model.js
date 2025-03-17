@@ -54,7 +54,23 @@ const userSchema = new mongoose.Schema({
         type:mongoose.Schema.ObjectId,
         ref:'Post',
         default:[]
-    }]
+    }],
+    phone: {
+        type: String,
+
+    },
+    razorpayContactId: {
+        type: String,
+        default: null, // Initially null, will be updated after linking bank account
+    },
+    razorpayFundAccountId: {
+        type: String,
+        default: null, // Initially null, will be updated after linking bank account
+    },
+    bankLinked: {
+        type: Boolean,
+        default: false, // Initially false, will be updated to true after linking bank account
+    },
 },{timestamps:true})
 
 const User = mongoose.model("User",userSchema)

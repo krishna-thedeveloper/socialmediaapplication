@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import SideRow from './SideRow'
 import { HomeIcon,BellIcon,EnvelopeIcon,UserIcon } from '@heroicons/react/24/outline'
-import NewPost from './NewPost'
+import { useNewpost } from '../context/NewpostContext'
 
 
 const Sidebar = () => {
-  const [newPostShow,setNewPostShow]=useState(false)
+  const {newPostShow,setNewPostShow}= useNewpost();
   const handleNewPost = ()=>{
     setNewPostShow(true)
   }
@@ -22,7 +22,6 @@ const Sidebar = () => {
       <div onClick={handleNewPost} className='text-white text-2xl bg-blue-950 rounded-2xl w-52 p-3 m-2 fixed bottom-0'>
       New post
       </div>
-      {newPostShow && <NewPost setNewPostShow={setNewPostShow} /> }
       </div>
   )
 }

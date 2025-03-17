@@ -1,10 +1,14 @@
 import express from 'express';
 import { protectRoute } from '../middleware/protectRoute.js';
 import {createPost,deletePost,commentPost,getPostComments,likeUnlikePost,getAllPosts,getLikedPosts,getFollowingPosts,getUserPosts} from '../controllers/post.controller.js'
+import multer from "multer";
+
+
+const upload = multer({ dest: "uploads/" });
 
 const router = express.Router();
 
-router.post('/create',protectRoute,createPost)
+router.post('/create',upload.single("image"),protectRoute,createPost)
 router.get('/all',protectRoute,getAllPosts)
 router.get('/user/:username',protectRoute,getUserPosts)
 router.get('/following',protectRoute,getFollowingPosts)
