@@ -28,7 +28,17 @@ const UserSearch = ({user}) => {
 
     <div className='flex gap-2 my-5 p-2'  >
           <Link to={`/profile/${user.username}`} className="flex gap-2 hover:underline">
-              <div className='h-10 w-10 rounded-full bg-slate-600'></div>
+              <div className='h-10 w-10 rounded-full bg-slate-600'>
+                {user.profileImg && (
+                  <img 
+                  src={user.profileImg} 
+                className="h-10 w-10 object-cover rounded-full"
+                onError={(e) => {
+                  e.target.src = "/image-placeholder.png";
+                }}
+                />
+              )}
+              </div>
               <div ><h5 className='text-xl'>{user.fullName}</h5><h5 className='text-sm'>@{user.username}</h5></div>
           </Link>
               <button onClick={handleClick} className='bg-white text-black rounded-3xl px-5 font-bold'>

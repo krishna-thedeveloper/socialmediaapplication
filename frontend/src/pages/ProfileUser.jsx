@@ -67,7 +67,9 @@ const ProfileUser = () => {
     }, [user]);
 
     if (isUserLoading) {
-        return <div className="flex justify-center items-center h-screen">Loading user data...</div>;
+        return <div className="flex mx-auto mt-8 items-center">
+                <div className="animate-spin w-10 h-10 p-2 border-t-2 border-t-slate-200 rounded-full"></div>
+               </div>;
     }
 
     if (isError) {
@@ -86,19 +88,33 @@ const ProfileUser = () => {
                     </div>
                 </div>
 
-                {/* Cover Placeholder */}
-                <div className="h-48 w-full bg-gray-800 flex justify-center items-center">
-                    <div className="text-gray-500 text-2xl font-semibold">
-                        
-                    </div>
-                </div>
+            {/* Cover Placeholder */}
+            <div className="h-56 w-full bg-gradient-to-r from-purple-800 to-indigo-900 flex justify-center items-center">
+             {user.coverImg ? (
+                <img
+                  src={user.coverImg}
+                  alt="Cover"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="text-gray-400 text-2xl font-semibold">Cover Placeholder</div>
+              )}
+            </div>
 
                 {/* Profile Placeholder */}
-                <div className="flex justify-center -mt-16">
-                    <div className="bg-gray-700 rounded-full h-32 w-32 flex items-center justify-center border-4 border-gray-800 shadow-lg">
-                        <UserCircleIcon className="h-20 w-20 text-gray-400" />
+                    <div className="flex justify-center -mt-16">
+                      <div className="bg-gray-700 rounded-full h-32 w-32 flex items-center justify-center border-4 border-gray-800 shadow-lg">
+                        {user.profileImg ? (
+                          <img
+                            src={user.profileImg}
+                            alt="Profile"
+                            className="w-full h-full object-cover rounded-full"
+                          />
+                        ) : (
+                          <UserCircleIcon className="h-20 w-20 text-gray-400" />
+                        )}
+                      </div>
                     </div>
-                </div>
 
                 {/* User Info Section */}
                 <div className="flex flex-col gap-5 m-8 mt-16">

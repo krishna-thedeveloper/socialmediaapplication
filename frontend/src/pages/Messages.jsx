@@ -39,6 +39,18 @@ export default function ChatUI() {
               setMessages(messagesData[user.id]);
             }}
           >
+                      <div className="bg-gray-700 rounded-full h-10 w-10 flex items-center justify-center border-4 border-gray-800 shadow-lg">
+                        {user.profileImg ? (
+                          <img
+                            src={user.profileImg}
+                            alt="Profile"
+                            className="w-full h-full object-cover rounded-full"
+                          />
+                        ) : (
+                          <UserCircleIcon className="h-20 w-20 text-gray-400" />
+                        )}
+                      </div>
+                            
             {user.name}
           </div>
         ))}

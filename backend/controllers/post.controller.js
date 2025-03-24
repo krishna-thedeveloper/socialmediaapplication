@@ -104,23 +104,36 @@ export const commentPost = async (req,res)=>{
         return res.status(500).json({error:"Internal server error"})
     }
 }
-export const getPostComments =async (req,res)=>{
-    try{
+export const getPostComments = async (req, res) => {
+    try {
+        const postId = req.params.id;
         
-        const postId = req.params.id
-        const post =await Post.findById(postId).populate({
-            path:"comments.user",
-            select:"-password -email"
+        // Find post and sort comments by createdAt in descending order (newest first)
+        const post = await Post.findById(postId)
+            .populate({
+                path: "comments.user",
+                select: "username profileImg createdAt" // Only include necessary fields
             })
-        const comments = post.comments
-            
-        return res.status(200).json({comments:comments,numberOfComments:comments.length})
-    }catch(error){
-        console.log(error)
-        return {"error":"something went worong"}
+            .sort({ 'comments.createdAt': -1 }); // Sort comments by newest first
+
+        if (!post) {
+            return res.status(404).json({ error: "Post not found" });
+        }
+
+        // Client-side sorting as fallback (in case the DB sort didn't work)
+        const sortedComments = post.comments.sort((a, b) => {
+            return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+
+        return res.status(200).json({
+            comments: sortedComments,
+            numberOfComments: sortedComments.length
+        });
+    } catch (error) {
+        console.error("Error fetching comments:", error);
+        return res.status(500).json({ error: "Something went wrong" });
     }
-    
-}
+};
 
 export const likeUnlikePost = async (req,res)=>{
     try{
@@ -224,3 +237,56 @@ export const getUserPosts = async (req,res)=>{
         return res.status(500).json({error:"Internal server error"})
     }
 }
+
+export const deleteComment = async (req, res) => {
+    try {
+        const { postId, commentId } = req.params;
+        const userId = req.user._id; // From authentication middleware
+
+        // Find the post containing the comment
+        const post = await Post.findOne({
+            _id: postId,
+            'comments._id': commentId,
+            'comments.user': userId // Ensure comment belongs to requesting user
+        });
+
+        if (!post) {
+            return res.status(404).json({ 
+                success: false,
+                message: "Comment not found or unauthorized" 
+            });
+        }
+
+        // Remove the comment
+        await Post.findByIdAndUpdate(
+            postId,
+            {
+                $pull: { 
+                    comments: { 
+                        _id: commentId,
+                        user: userId 
+                    } 
+                }
+            }
+        );
+
+        // Get updated comment count
+        const updatedPost = await Post.findById(postId);
+        const commentCount = updatedPost.comments.length;
+
+        res.status(200).json({ 
+            success: true,
+            commentCount,
+            message: "Comment deleted successfully" 
+        });
+
+    } catch (error) {
+        console.error("Error deleting comment:", error);
+        res.status(500).json({ 
+            success: false,
+            message: "Failed to delete comment" 
+        });
+    }
+};
+
+

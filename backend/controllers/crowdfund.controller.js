@@ -314,3 +314,19 @@ export const deleteCrowdfund = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
+export const getFollowingCrowdfundingPosts = async (req,res)=>{
+    try{
+        const userId = req.user._id
+        const user = await User.findById(userId).select("following")
+        if(!user)   return res.status(404).json({error:"user not found"})
+        const followingPosts = await Crowdfund.find({user:{$in:user.following}}).populate({
+        path:"user",
+        select:"-password -email"
+        })
+        return res.status(200).json(followingPosts)
+    }catch(error){
+        console.log(error.message)
+        return res.status(500).json({error:"Internal server error"})
+    }
+}

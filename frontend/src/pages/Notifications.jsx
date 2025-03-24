@@ -1,3 +1,4 @@
+import { UserCircleIcon } from '@heroicons/react/24/outline'
 import React, { useEffect, useState } from 'react'
 
 const Notifications = () => {
@@ -25,13 +26,39 @@ const Notifications = () => {
         {notifications.length>0 ? (notifications.map((notification)=>{
             if(notification.type == 'like'){
             return <div className='border-b flex p-2 gap-5'>
-            <div className='h-10 w-10 rounded-full bg-slate-900'></div>
+                      {/* Profile Placeholder */}
+                      <div className="flex h-10 w-10 justify-center ">
+                      <div className="bg-gray-700 rounded-full h-10 w-10 flex items-center justify-center border-4 border-gray-800 shadow-lg">
+                        {notification.from.profileImg ? (
+                          <img
+                            src={notification.from.profileImg}
+                            alt="Profile"
+                            className="w-full h-full object-cover rounded-full"
+                          />
+                        ) : (
+                          <UserCircleIcon className="h-20 w-20 text-gray-400" />
+                        )}
+                      </div>
+                    </div>
             
              <div> @{notification.from.username} liked your post</div>
         </div>
             }else{
                 return <div className='border-b flex p-2 gap-5'>
-                <div className='h-10 w-10 rounded-full bg-slate-900'></div>
+                        {/* Profile Placeholder */}
+                      <div className="flex justify-center">
+                      <div className="bg-gray-700 rounded-full h-10 w-10 flex items-center justify-center border-4 border-gray-800 shadow-lg">
+                        {notification.from.profileImg ? (
+                          <img
+                            src={notification.from.profileImg}
+                            alt="Profile"
+                            className="w-full h-full object-cover rounded-full"
+                          />
+                        ) : (
+                          <UserCircleIcon className="h-20 w-20 text-gray-400" />
+                        )}
+                      </div>
+                    </div>
                 
                  <div> @{notification.from.username} commented on your post
                  <div className=' ms-2'>{notification.text}</div>

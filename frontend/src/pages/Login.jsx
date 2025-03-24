@@ -47,9 +47,8 @@ const Login = () => {
       const data = await response.json();
       console.log(data); // Log the response data
   
-      if (data) {
-        login(data); // Update login state
-        navigate('/'); // Redirect to homepage
+      if (response.ok && data) {
+        checkAuth()
       }
     } catch (error) {
       console.error('Error:', error); // Handle errors

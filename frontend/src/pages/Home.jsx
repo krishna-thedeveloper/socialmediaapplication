@@ -19,7 +19,7 @@ const Home = () => {
 
   // Fetch crowdfunding posts
   const { data: crowdfundPosts, isLoading: cfLoading, isError: cfError, error: cfErrorMsg } = 
-    useFetch(`/api/crowdfunds/all`, { credentials: 'include' });
+    useFetch(`/api/crowdfunds/${getEndpoint()}`, { credentials: 'include' });
 
   // Merge posts and crowdfunding campaigns into one feed
   const combinedPosts = [...(posts || []), ...(crowdfundPosts || [])].sort(

@@ -30,8 +30,7 @@ const Signup = () => {
   
   
       if (response.ok && data) {
-        login(data); // Update login state
-        navigate('/'); // Redirect to homepage
+        checkAuth()
       }
     } catch (error) {
       console.error('Error:', error); // Handle errors
