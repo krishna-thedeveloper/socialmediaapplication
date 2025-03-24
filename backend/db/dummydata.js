@@ -25,63 +25,34 @@ async function seedDatabase() {
   try {
     // Clear existing data
 
-    await Message.deleteMany({});
-    console.log("Cleared existing data");
+   // await Message.deleteMany({});
+    //console.log("Cleared existing data");
 
     // Create dummy users
-    const user1 = await User.create({
-      username: "krish",
-      email: "krish@gmail.com",
-      password: "password123", // In a real app, hash the password!
-      fullName:"alice"
-    });
-
-    const user2 = await User.create({
-     fullName:"bob",
-      username: "bob",
-      email: "bob@example.com",
-      password: "password123", // In a real app, hash the password!
-    });
-
-    const user3 = await User.create({
-      username: "charlie",
-      email: "charlie@example.com",
-      password: "password123", // In a real app, hash the password!
-    });
 
     console.log("Created dummy users");
 
     // Create dummy messages
     const messages = [
       {
-        sender: user1._id,
-        receiver: user2._id,
-        content: "Hey Bob, how are you?",
+        sender: "67d868ad205233de45f86f2d",
+        receiver: "67d868f7205233de45f86f3f",
+        content: "Hello, how are you?",
       },
       {
-        sender: user2._id,
-        receiver: user1._id,
+        sender: "67d868f7205233de45f86f3f",
+        receiver: "67d868ad205233de45f86f2d",
         content: "I'm good, thanks! How about you?",
       },
       {
-        sender: user1._id,
-        receiver: user3._id,
-        content: "Hi Charlie, are you coming to the meeting?",
+        sender: "67d868ad205233de45f86f2d",
+        receiver: "67d868f7205233de45f86f3f",
+        content: "Hey, are you coming to the meeting?",
       },
       {
-        sender: user3._id,
-        receiver: user1._id,
+        sender: "67d868f7205233de45f86f3f",
+        receiver: "67d868ad205233de45f86f2d",
         content: "Yes, I'll be there!",
-      },
-      {
-        sender: user2._id,
-        receiver: user3._id,
-        content: "Charlie, can you send me the report?",
-      },
-      {
-        sender: user3._id,
-        receiver: user2._id,
-        content: "Sure, I'll email it to you.",
       },
     ];
 

@@ -1,5 +1,5 @@
 import express from "express";
-import { createCrowdfund, getCrowdfunds,getCrowdfund, getCrowdfundById, donateToCrowdfund, verifyPayment } from "../controllers/crowdfund.controller.js";
+import { createCrowdfund, getCrowdfunds,getCrowdfund, getCrowdfundById, donateToCrowdfund, verifyPayment, deleteCrowdfund } from "../controllers/crowdfund.controller.js";
 import multer from "multer";
 
 const upload = multer({ dest: "uploads/" });
@@ -11,5 +11,5 @@ router.get("/user/:id", getCrowdfund);
 router.get("/:id", getCrowdfundById);
 router.post("/donate/:id", donateToCrowdfund);
 router.post("/verify", verifyPayment);
-
+router.delete('/:campaignId', deleteCrowdfund);
 export default router;

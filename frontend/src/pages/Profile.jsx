@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 import Post from '../components/Post'; // Existing Post component
 import Campaign from '../components/Campaign'; // New Campaign component
 import { useUser } from '../context/UserContext';
@@ -18,6 +18,14 @@ const Profile = () => {
     coverImage: null, // File object for cover image
   });
   const { user, updateUser } = useUser();
+  const handleDeleteCampaign = (campaignId) => {
+    setCampaigns((prevCampaigns) =>
+        prevCampaigns.filter((campaign) => campaign._id !== campaignId)
+    );
+};
+  const handleDeletePost = (postId) => {
+    setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
+  };
 
   // Determine endpoint based on postType and user info
   const getEndpoint = () => {
@@ -107,7 +115,6 @@ const Profile = () => {
         body: formPayload, // Send as FormData
       });
       const updatedUser = await response.json();
-      console.log(updateUser)
       updateUser(updatedUser);
       setIsEditing(false);
     } catch (error) {
@@ -116,150 +123,204 @@ const Profile = () => {
   };
 
   if (!user) {
-    return <div>Loading user data...</div>;
+    return <div className="flex justify-center items-center h-screen">Loading user data...</div>;
   }
 
   return (
     <div className="max-sm:pb-20 flex flex-col flex-1 lg:ml-60 lg:mr-72 md:ml-20 overflow-y-auto mt-2">
       <div className="flex flex-col flex-1">
-        <div className="flex gap-5 items-center">
-          <ArrowLeftIcon className="size-5 text-white" />
+        {/* Header Section */}
+        <div className="flex gap-5 items-center p-4 border-b border-gray-700">
+          <ArrowLeftIcon className="size-5 text-white cursor-pointer hover:text-gray-400 transition duration-300" />
           <div>
-            <h3 className="text-xl font-bold">{user.fullName}</h3>
-            <h5>
+            <h3 className="text-xl font-bold text-white">{user.fullName}</h3>
+            <h5 className="text-gray-400">
               {postType === 'posts' && `${posts.length} Posts`}
               {postType === 'likes' && `${posts.length} Likes`}
               {postType === 'campaigns' && `${campaigns.length} Campaigns`}
             </h5>
           </div>
-          <button onClick={handleEditClick} className="ml-auto bg-blue-500 text-white px-4 py-2 rounded">
+          <button
+            onClick={handleEditClick}
+            className="ml-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-full transition duration-300 ease-in-out transform hover:scale-105"
+          >
             Edit Profile
           </button>
         </div>
-        <div className="h-56 w-full bg-slate-800 relative">
-          <img
-            src={user.coverImg || 'https://via.placeholder.com/800x200'}
-            alt="Cover"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute bottom-[-40px] left-1/2 transform -translate-x-1/2 bg-slate-500 rounded-full h-36 w-36 border-2 border-black overflow-hidden">
+
+        {/* Cover Placeholder */}
+        <div className="h-56 w-full bg-gradient-to-r from-purple-800 to-indigo-900 flex justify-center items-center">
+          {user.coverImg ? (
             <img
-              src={user.profileImg || 'https://via.placeholder.com/150'}
-              alt="Profile"
+              src={user.coverImg}
+              alt="Cover"
               className="w-full h-full object-cover"
             />
+          ) : (
+            <div className="text-gray-400 text-2xl font-semibold">Cover Placeholder</div>
+          )}
+        </div>
+
+        {/* Profile Placeholder */}
+        <div className="flex justify-center -mt-16">
+          <div className="bg-gray-700 rounded-full h-32 w-32 flex items-center justify-center border-4 border-gray-800 shadow-lg">
+            {user.profileImg ? (
+              <img
+                src={user.profileImg}
+                alt="Profile"
+                className="w-full h-full object-cover rounded-full"
+              />
+            ) : (
+              <UserCircleIcon className="h-20 w-20 text-gray-400" />
+            )}
           </div>
         </div>
 
-        <div className="flex flex-col gap-5 m-8 mt-20">
-          <div>
-            <h2 className="text-2xl font-bold">{user.fullName}</h2>
-            <h6>@{user.username}</h6>
+        {/* User Info Section */}
+        <div className="flex flex-col gap-5 m-8 mt-16">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-white">{user.fullName}</h2>
+            <h6 className="text-gray-400">@{user.username}</h6>
           </div>
-          <div className="flex gap-4 text-lg">
-            <span>{user.following.length} following</span> <span>{user.followers.length} followers</span>
+          <div className="flex gap-4 text-lg justify-center items-center">
+            <span className="text-gray-300">{user.following.length} following</span>
+            <span className="text-gray-300">{user.followers.length} followers</span>
           </div>
         </div>
-        <div className="flex gap-5 text-xl justify-around border-b-2">
+
+        {/* Tabs for Posts, Likes, and Campaigns */}
+        <div className="flex gap-5 text-xl justify-around border-b-2 border-gray-700 pb-2">
           <div
-            className={postType === 'posts' ? 'border-b-4 border-b-blue-500' : ''}
+            className={`cursor-pointer ${
+              postType === 'posts' ? 'border-b-4 border-b-blue-500 text-white' : 'text-gray-400 hover:text-white'
+            } transition duration-300`}
             onClick={() => setPostType('posts')}
           >
             Posts
           </div>
           <div
-            className={postType === 'likes' ? 'border-b-4 border-b-blue-500' : ''}
+            className={`cursor-pointer ${
+              postType === 'likes' ? 'border-b-4 border-b-blue-500 text-white' : 'text-gray-400 hover:text-white'
+            } transition duration-300`}
             onClick={() => setPostType('likes')}
           >
             Likes
           </div>
           <div
-            className={postType === 'campaigns' ? 'border-b-4 border-b-blue-500' : ''}
+            className={`cursor-pointer ${
+              postType === 'campaigns' ? 'border-b-4 border-b-blue-500 text-white' : 'text-gray-400 hover:text-white'
+            } transition duration-300`}
             onClick={() => setPostType('campaigns')}
           >
             Campaigns
           </div>
         </div>
       </div>
+
+      {/* Loading Spinner */}
       {isLoading && (
-        <div className="flex justify-center">
+        <div className="flex justify-center mt-8">
           <div className="animate-spin w-10 h-10 p-2 border-t-2 border-t-slate-200 rounded-full"></div>
         </div>
       )}
-      {!isLoading && postType === 'posts' && !posts.length && <div>No posts found.</div>}
-      {!isLoading && postType === 'likes' && !posts.length && <div>No liked posts found.</div>}
-      {!isLoading && postType === 'campaigns' && !campaigns.length && <div>No campaigns found.</div>}
+
+      {/* Empty State Messages */}
+      {!isLoading && postType === 'posts' && !posts.length && (
+        <div className="flex justify-center items-center h-40 text-gray-400">
+          <span>No posts found.</span>
+        </div>
+      )}
+      {!isLoading && postType === 'likes' && !posts.length && (
+        <div className="flex justify-center items-center h-40 text-gray-400">
+          <span>No liked posts found.</span>
+        </div>
+      )}
+      {!isLoading && postType === 'campaigns' && !campaigns.length && (
+        <div className="flex justify-center items-center h-40 text-gray-400">
+          <span>No campaigns found.</span>
+        </div>
+      )}
+
+      {/* Posts List */}
       {!isLoading && postType !== 'campaigns' && posts.length > 0 && (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center p-4">
           {posts.map((post) => (
             <Post
               key={post._id}
               post={post}
               setActiveCommentPostId={setActiveCommentPostId}
               activeCommentPostId={activeCommentPostId}
+              onDelete={handleDeletePost}
             />
           ))}
         </div>
       )}
+
+      {/* Campaigns List */}
       {!isLoading && postType === 'campaigns' && campaigns.length > 0 && (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center p-4">
           {campaigns.map((campaign) => (
-            <Campaign key={campaign._id} campaign={campaign} />
+            <Campaign key={campaign._id} campaign={campaign} onDelete={handleDeleteCampaign}/>
           ))}
         </div>
       )}
+
+      {/* Edit Profile Modal */}
       {isEditing && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-slate-600 p-6 rounded-lg w-1/3">
-            <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
+          <div className="bg-slate-800 p-6 rounded-lg w-11/12 md:w-1/3">
+            <h2 className="text-xl font-bold mb-4 text-white">Edit Profile</h2>
             <form onSubmit={handleFormSubmit}>
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-2 text-black">Full Name</label>
+                <label className="block text-sm font-medium mb-2 text-gray-300">Full Name</label>
                 <input
                   type="text"
                   name="fullName"
                   value={formData.fullName}
                   onChange={handleFormChange}
-                  className="w-full p-2 border rounded text-black"
+                  className="w-full p-2 border rounded bg-slate-700 text-white"
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-2 text-black">Username</label>
+                <label className="block text-sm font-medium mb-2 text-gray-300">Username</label>
                 <input
                   type="text"
                   name="username"
                   value={formData.username}
                   onChange={handleFormChange}
-                  className="w-full p-2 border rounded text-black"
+                  className="w-full p-2 border rounded bg-slate-700 text-white"
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-2 text-black">Profile Image</label>
+                <label className="block text-sm font-medium mb-2 text-gray-300">Profile Image</label>
                 <input
                   type="file"
                   name="profileImage"
                   onChange={handleFileChange}
-                  className="w-full p-2 border rounded text-black"
+                  className="w-full p-2 border rounded bg-slate-700 text-white"
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-2 text-black">Cover Image</label>
+                <label className="block text-sm font-medium mb-2 text-gray-300">Cover Image</label>
                 <input
                   type="file"
                   name="coverImage"
                   onChange={handleFileChange}
-                  className="w-full p-2 border rounded text-black"
+                  className="w-full p-2 border rounded bg-slate-700 text-white"
                 />
               </div>
               <div className="flex justify-end">
                 <button
                   type="button"
                   onClick={() => setIsEditing(false)}
-                  className="mr-2 bg-gray-500 text-white px-4 py-2 rounded text-black"
+                  className="mr-2 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition duration-300"
                 >
                   Cancel
                 </button>
-                <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+                <button
+                  type="submit"
+                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300"
+                >
                   Save
                 </button>
               </div>

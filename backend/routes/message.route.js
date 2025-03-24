@@ -6,12 +6,52 @@ import User from "../models/user.model.js";
 
 const router = express.Router();
 
+router.get("/messaged", async (req, res) => {
+  const currentUserId = req.user._id; // Assuming you have authentication middleware
+  try {
+    // Find all unique users who have exchanged messages with the current user
+    const messages = await Message.find({
+      $or: [{ sender: currentUserId }, { receiver: currentUserId }],
+    }).populate("sender receiver", "fullName username profileImg");
+
+    // Extract unique users
+    const usersMap = new Map(); // Use a Map to deduplicate by _id
+    messages.forEach((message) => {
+      // Check sender
+      if (
+        message.sender &&
+        message.sender._id.toString() !== currentUserId.toString()
+      ) {
+        usersMap.set(message.sender._id.toString(), message.sender);
+      }
+
+      // Check receiver
+      if (
+        message.receiver &&
+        message.receiver._id.toString() !== currentUserId.toString()
+      ) {
+        usersMap.set(message.receiver._id.toString(), message.receiver);
+      }
+    });
+
+    // Convert Map values to an array
+    const users = Array.from(usersMap.values());
+    console.log("final", users);
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Failed to fetch users with messages:", error);
+    res.status(500).json({ message: "Failed to fetch users with messages" });
+  }
+});
 router.get("/:username", async (req, res) => {
     try {
       const { username } = req.params;
       console.log(username)
       const user = await User.findOne({ username });
       // Fetch messages where the user is either the sender or receiver
+      if (!user) {
+        return res.status(404).json({ error: "user not found" });
+      }
     const messages = await Message.find({
       $or: [
         { sender: user._id,receiver: req.user._id }, // Messages where the user is the sender
@@ -20,8 +60,7 @@ router.get("/:username", async (req, res) => {
     })
       .populate("sender", "username") // Populate sender details (only username)
       .populate("receiver", "username"); // Populate receiver details (only username)
-      console.log(messages)
-      console.log("sender:",req.user._id,"receiver:",user._id)
+
     // Return the messages
     res.status(200).json(messages);
     } catch (error) {
@@ -32,7 +71,7 @@ router.get("/:username", async (req, res) => {
   
 
   // Send a message
-  router.post("/send/:receiverUsername", protectRoute, async (req, res) => {
+  router.post("/:receiverUsername", protectRoute, async (req, res) => {
     try {
       const { content } = req.body;
       const { receiverUsername } = req.params;
@@ -55,31 +94,6 @@ router.get("/:username", async (req, res) => {
     }
   });
   
-  // Fetch messages between two users
-  router.get("/:receiverUsername", protectRoute, async (req, res) => {
-    try {
-      const { receiverUsername } = req.params;
-      const senderId = req.user._id;
-  
-      // Find the receiver by username
-      const receiver = await User.findOne({ username: receiverUsername });
-      if (!receiver) {
-        return res.status(404).json({ error: "Receiver not found" });
-      }
-  
-      // Fetch messages where sender and receiver match
-      const messages = await Message.find({
-        $or: [
-          { sender: senderId, receiver: receiver._id },
-          { sender: receiver._id, receiver: senderId },
-        ],
-      }).sort({ timestamp: 1 });
-  
-      res.status(200).json(messages);
-    } catch (error) {
-      console.error("Error fetching messages:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
-  });
+
 
 export default router;

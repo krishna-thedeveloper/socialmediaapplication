@@ -47,7 +47,7 @@ const Home = () => {
         </div>
       </div>
       
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center overflow-y-auto scrollbar-hidden">
         {combinedPosts?.map((post) =>
           post.goalAmount ? ( // Check if it's a crowdfunding post
             <CrowdfundPost key={post._id} post={post} />
@@ -70,6 +70,7 @@ const Home = () => {
       </div>
 
       {newPostShow && <NewPost />}
+   
     </div>
   );
 };

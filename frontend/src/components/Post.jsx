@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import PostFooter from "../components/PostFooter";
 import CommentSection from "./CommentSection";
 import { HeartIcon, EyeIcon, ChatBubbleLeftIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import { EllipsisVerticalIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
+import { useUser } from "../context/UserContext";
 
-const Post = ({ post, setActiveCommentPostId, activeCommentPostId, user }) => {
+const Post = ({ post, setActiveCommentPostId, activeCommentPostId, onDelete }) => {
   const [likeCount, setLikeCount] = useState(post.likes.length);
   const [commentCount, setCommentCount] = useState(post.comments.length);
   const [viewCount, setViewCount] = useState(post.views);
@@ -14,10 +15,9 @@ const Post = ({ post, setActiveCommentPostId, activeCommentPostId, user }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportReason, setReportReason] = useState("");
-
+  const {user}=useUser()
   const handleReport = async () => {
     if (!reportReason) return alert("Please select a reason");
-
 
     try {
       await axios.post("http://localhost:3000/api/reports/", {
@@ -31,6 +31,22 @@ const Post = ({ post, setActiveCommentPostId, activeCommentPostId, user }) => {
       setReportReason("");
     } catch (error) {
       console.error("Error reporting post", error);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const response = await axios.delete(`http://localhost:3000/api/posts/${post._id}`, {
+        withCredentials: true,
+      });
+
+      if (response.status === 200) {
+        alert("Post deleted successfully");
+        onDelete(post._id); // Call the callback to update the parent component
+      }
+    } catch (error) {
+      console.error("Error deleting post", error);
+      alert("Failed to delete post");
     }
   };
 
@@ -51,9 +67,21 @@ const Post = ({ post, setActiveCommentPostId, activeCommentPostId, user }) => {
           <button onClick={() => setShowReportModal(true)} className="block px-4 py-2 text-sm">
             Report Post
           </button>
+          {user && user._id === post.user._id && (
+            <button
+              onClick={() => {
+                handleDelete(); // Call the delete function
+                setShowMenu(false); // Close the menu
+              }}
+              className="block px-4 py-2 text-sm text-red-500"
+            >
+              Delete Post
+            </button>
+          )}
         </div>
       )}
-{post.img && <img src={post.img} alt={post.title} className="w-full h-60 object-cover mt-2 rounded-lg" />}
+
+      {post.img && <img src={post.img} alt={post.title} className="w-full h-60 object-cover mt-2 rounded-lg" />}
       <div className="p-3">{post.text}</div>
       <div className="flex justify-around">
         <PostFooter
@@ -83,39 +111,37 @@ const Post = ({ post, setActiveCommentPostId, activeCommentPostId, user }) => {
 
       {/* Report Modal */}
       {showReportModal && (
-  <div 
-    className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" 
-    onClick={() => setShowReportModal(false)}
-  >
-    <div 
-      className="p-5 rounded-lg w-96 bg-black relative"
-      onClick={(e) => e.stopPropagation()} // Prevents modal from closing when clicking inside
-    >
-      <div className="flex justify-between">
-        <h3 className="text-lg font-semibold">Report Post</h3>
-        <button onClick={() => setShowReportModal(false)}>
-          <XMarkIcon className="h-5 w-5 text-gray-500" />
-        </button>
-      </div>
-      <select
-        className="w-full p-2 mt-3 border rounded-md bg-inherit"
-        onChange={(e) => setReportReason(e.target.value)}
-      >
-        <option className="bg-inherit" value="">Select a reason</option>
-        <option className="bg-inherit" value="spam">Spam</option>
-        <option className="bg-inherit" value="harassment">Harassment</option>
-        <option className="bg-inherit" value="misinformation">Misinformation</option>
-      </select>
-      <div className="flex justify-end mt-4">
-        <button onClick={handleReport} className="bg-red-500 text-white px-4 py-2 rounded-md">
-          Submit Report
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
-
+        <div 
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" 
+          onClick={() => setShowReportModal(false)}
+        >
+          <div 
+            className="p-5 rounded-lg w-96 bg-black relative"
+            onClick={(e) => e.stopPropagation()} // Prevents modal from closing when clicking inside
+          >
+            <div className="flex justify-between">
+              <h3 className="text-lg font-semibold">Report Post</h3>
+              <button onClick={() => setShowReportModal(false)}>
+                <XMarkIcon className="h-5 w-5 text-gray-500" />
+              </button>
+            </div>
+            <select
+              className="w-full p-2 mt-3 border rounded-md bg-inherit"
+              onChange={(e) => setReportReason(e.target.value)}
+            >
+              <option className="bg-inherit" value="">Select a reason</option>
+              <option className="bg-inherit" value="spam">Spam</option>
+              <option className="bg-inherit" value="harassment">Harassment</option>
+              <option className="bg-inherit" value="misinformation">Misinformation</option>
+            </select>
+            <div className="flex justify-end mt-4">
+              <button onClick={handleReport} className="bg-red-500 text-white px-4 py-2 rounded-md">
+                Submit Report
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

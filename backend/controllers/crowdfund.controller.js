@@ -290,3 +290,27 @@ export const getCrowdfund = async (req, res) => {
       res.status(500).json({ message: 'Error fetching campaigns' });
     }
   }
+
+
+export const deleteCrowdfund = async (req, res) => {
+    const { campaignId } = req.params;
+    const userId = req.user._id; // Assuming you have user info from authentication middleware
+
+    try {
+        const campaign = await Crowdfund.findById(campaignId);
+        if (!campaign) {
+            return res.status(404).json({ message: 'Campaign not found' });
+        }
+
+        // Check if the current user is the author of the campaign
+        if (campaign.user.toString() !== userId) {
+            return res.status(403).json({ message: 'Unauthorized to delete this campaign' });
+        }
+
+        await Crowdfund.findByIdAndDelete(campaignId);
+        res.status(200).json({ message: 'Campaign deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting campaign:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};

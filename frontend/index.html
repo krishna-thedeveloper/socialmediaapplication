@@ -10,5 +10,52 @@
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    let isSpanRemoved = false; // Flag to track if the <span> has been removed
+
+    // MutationObserver logic
+    const targetNode = document.body;
+    const config = { childList: true, subtree: true };
+
+    const callback = function (mutationsList, observer) {
+        if (isSpanRemoved) {
+            observer.disconnect();
+            console.log('MutationObserver disconnected.');
+            return;
+        }
+
+        for (let mutation of mutationsList) {
+            if (mutation.type === 'childList') {
+                mutation.addedNodes.forEach(node => {
+                    if (node.nodeName === 'SPAN' && node.innerText === 'Test Mode') {
+                        node.remove();
+                        isSpanRemoved = true;
+                        console.log('Test Mode span removed:', node);
+                        observer.disconnect();
+                        console.log('MutationObserver disconnected.');
+                    }
+                });
+            }
+        }
+    };
+
+    const observer = new MutationObserver(callback);
+    observer.observe(targetNode, config);
+    console.log('MutationObserver started.');
+
+    // Fallback with setTimeout
+    setTimeout(() => {
+        if (!isSpanRemoved) {
+            const testModeSpan = document.querySelector('span[style*="background: rgb(214, 68, 68)"]');
+            if (testModeSpan) {
+                testModeSpan.remove();
+                isSpanRemoved = true;
+                console.log('Test Mode span removed with setTimeout:', testModeSpan);
+            }
+        }
+    }, 2000); // Fallback delay of 2000ms (2 seconds)
+});
+  </script>
   </body>
 </html>
