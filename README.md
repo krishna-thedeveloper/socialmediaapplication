@@ -25,10 +25,6 @@
 
 ---
 
-## 📸 Preview
-
-> Add screenshots or a demo video link here
-
 ---
 
 ## 🛠 Tech Stack
