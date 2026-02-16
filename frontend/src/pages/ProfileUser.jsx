@@ -19,7 +19,7 @@ const ProfileUser = () => {
     const getUser = async () => {
         setIsUserLoading(true);
         try {
-            const response = await fetch('${import.meta.env.VITE_API_URL}/api/users/profile/' + username, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/profile/` + username, {
                 credentials: 'include'
             });
             const data = await response.json();

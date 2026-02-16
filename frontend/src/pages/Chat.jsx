@@ -52,7 +52,7 @@ export default function ChatInterface() {
   useEffect(() => {
     const fetchMessagedUsers = async () => {
       try {
-        const response = await axios.get("${import.meta.env.VITE_API_URL}/api/messages/messaged", {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/messages/messaged`, {
           withCredentials: true,
         });
         setUsers(response.data);

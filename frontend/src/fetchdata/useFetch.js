@@ -5,7 +5,7 @@ const useFetch = (url, options = {}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [error, setError] = useState(null);
-  const BASE_URL = "${import.meta.env.VITE_API_URL}";  // Assuming this is the base URL
+  const BASE_URL = import.meta.env.VITE_API_URL;  // Assuming this is the base URL
 
   useEffect(() => {
     const fetchData = async () => {

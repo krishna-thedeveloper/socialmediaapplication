@@ -70,7 +70,7 @@ const CrowdfundPost = ({ post, onDelete }) => {
 
     try {
       await axios.post(
-        "${import.meta.env.VITE_API_URL}/api/reports/",
+        `${import.meta.env.VITE_API_URL}/api/reports/`,
         {
           reportedBy: user._id,
           reportedCampaign: post._id,

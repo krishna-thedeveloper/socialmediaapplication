@@ -8,7 +8,7 @@ const MessageUserSearch = ({ onSelectUser }) => {
 
   const searchUsers = async () => {
     try {
-        const response = await fetch('${import.meta.env.VITE_API_URL}/api/users/profile/' + username, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/profile/` + username, {
             credentials: 'include'
         });
       setUsers([response.data]); // Assuming the API returns a single user

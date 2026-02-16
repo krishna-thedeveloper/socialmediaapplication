@@ -30,7 +30,7 @@ const Post = ({ post, setActiveCommentPostId, activeCommentPostId, onDelete }) =
     if (!reportReason) return alert("Please select a reason");
 
     try {
-      await axios.post("${import.meta.env.VITE_API_URL}/api/reports/", {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/reports/`, {
         reportedBy: user._id,
         reportedPost: post._id,
         reason: reportReason,

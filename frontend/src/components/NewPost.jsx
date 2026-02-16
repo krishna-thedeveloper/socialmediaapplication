@@ -40,7 +40,7 @@ const NewPost = () => {
 
   const handleLinkBankAccount = async () => {
     // Simulate linking bank account
-    const response = await fetch("${import.meta.env.VITE_API_URL}/api/user/link-bank", {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/link-bank`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -75,8 +75,8 @@ const NewPost = () => {
 
     const endpoint =
       postType === "normal"
-        ? "${import.meta.env.VITE_API_URL}/api/posts/create"
-        : "${import.meta.env.VITE_API_URL}/api/crowdfunds/";
+        ? `${import.meta.env.VITE_API_URL}/api/posts/create`
+        : `${import.meta.env.VITE_API_URL}/api/crowdfunds/`;
 
     const response = await fetch(endpoint, {
       method: "POST",

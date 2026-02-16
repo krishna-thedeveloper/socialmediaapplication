@@ -8,7 +8,7 @@ const UserSearch = ({user}) => {
   const handleClick = async ()=>{
     try{
       setIsLoading(true)
-    const response = await fetch("${import.meta.env.VITE_API_URL}/api/users/follow/"+user.username,{
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/follow/`+user.username,{
             method: "GET",
             headers: {
               'Content-Type': 'application/json',

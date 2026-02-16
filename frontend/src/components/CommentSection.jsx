@@ -33,7 +33,7 @@ const CommentSection = ({ postId, setActiveCommentPostId, setCommentCount, post 
   const fetchComments = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/posts/comment/${postId}?sort=-createdAt`,
+        `${import.meta.env.VITE_API_URL}/api/posts/comment/${postId}?sort=-createdAt`,
         { withCredentials: true }
       );
       setComments(response.data.comments);
@@ -77,7 +77,7 @@ const CommentSection = ({ postId, setActiveCommentPostId, setCommentCount, post 
 
     try {
       const response = await axios.post(
-        `http://localhost:3000/api/posts/comment/${postId}`,
+        `${import.meta.env.VITE_API_URL}/api/posts/comment/${postId}`,
         { text: newComment },
         { withCredentials: true }
       );
@@ -103,7 +103,7 @@ const CommentSection = ({ postId, setActiveCommentPostId, setCommentCount, post 
     setDeletingId(commentId);
     try {
       await axios.delete(
-        `http://localhost:3000/api/posts/${postId}/comments/${commentId}`,
+        `${import.meta.env.VITE_API_URL}/api/posts/${postId}/comments/${commentId}`,
         { withCredentials: true }
       );
       

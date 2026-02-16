@@ -17,7 +17,7 @@ const Signup = () => {
       console.log(formValues); // Log the form values for debugging
   
       // Send the form values directly in the body of the fetch request
-      const response = await fetch("${import.meta.env.VITE_API_URL}/api/auth/signup", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signup`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -41,7 +41,7 @@ const Signup = () => {
   const checkAuth = async () => {
 
 
-    const response = await fetch("${import.meta.env.VITE_API_URL}/api/auth", { credentials: 'include' });
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth`, { credentials: 'include' });
     const data = await response.json();
     
     if (response.ok) {

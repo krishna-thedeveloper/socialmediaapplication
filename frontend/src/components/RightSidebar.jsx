@@ -16,7 +16,7 @@ const RightSidebar = () => {
     setResults([])  
     setSearch(e.target.value); 
     setIsLoading(true)
-    const response = await fetch("${import.meta.env.VITE_API_URL}/api/search",{
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/search`,{
       method: "POST",
             headers: {
               'Content-Type': 'application/json',

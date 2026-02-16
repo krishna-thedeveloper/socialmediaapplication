@@ -36,7 +36,7 @@ app.use(cors({
   origin: [
   "http://localhost:5173",
   "https://quickchat.vercel.app", // your production frontend later
-  "http://35.224.57.6:3000"
+  "http://35.225.199.22:3000"
 ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
