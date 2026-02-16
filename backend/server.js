@@ -118,7 +118,8 @@ io.on("connection", (socket) => {
 });
 
 // Start the server
-server.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, '0.0.0.0', () => {
   console.log(`Backend started at Port : ${process.env.PORT}`);
   connectMongo();
 });
+
