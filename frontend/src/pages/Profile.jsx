@@ -44,14 +44,14 @@ const Profile = () => {
     try {
       if (postType === 'campaigns') {
         // Fetch campaigns
-        const response = await fetch(`http://localhost:3000/api/crowdfunds/${getEndpoint()}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/crowdfunds/${getEndpoint()}`, {
           credentials: 'include',
         });
         const data = await response.json();
         setCampaigns(data);
       } else {
         // Fetch posts or likes
-        const response = await fetch(`http://localhost:3000/api/posts/${getEndpoint()}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/posts/${getEndpoint()}`, {
           credentials: 'include',
         });
         const data = await response.json();
@@ -109,7 +109,7 @@ const Profile = () => {
         formPayload.append('coverImage', formData.coverImage);
       }
 
-      const response = await fetch(`http://localhost:3000/api/users/update`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/update`, {
         method: 'PUT',
         credentials: 'include',
         body: formPayload, // Send as FormData

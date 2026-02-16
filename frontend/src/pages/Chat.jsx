@@ -52,7 +52,7 @@ export default function ChatInterface() {
   useEffect(() => {
     const fetchMessagedUsers = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/messages/messaged", {
+        const response = await axios.get("${import.meta.env.VITE_API_URL}/api/messages/messaged", {
           withCredentials: true,
         });
         setUsers(response.data);
@@ -79,7 +79,7 @@ export default function ChatInterface() {
 
     const fetchMessages = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/messages/${username}`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/messages/${username}`, {
           withCredentials: true,
         });
         
@@ -132,7 +132,7 @@ export default function ChatInterface() {
 
     try {
       const response = await axios.post(
-        `http://localhost:3000/api/messages/${username}`,
+        `${import.meta.env.VITE_API_URL}/api/messages/${username}`,
         { 
           content: input,
           timestamp: { $date: { $numberLong: now.toString() } }

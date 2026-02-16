@@ -15,7 +15,7 @@ export default function ChatInterface() {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/messages/${username}`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/messages/${username}`, {
           withCredentials: true,
         });
         if (Array.isArray(response.data)) {
@@ -52,7 +52,7 @@ export default function ChatInterface() {
     try {
       // Send message to the server
       await axios.post(
-        `http://localhost:3000/api/messages/${username}`,
+        `${import.meta.env.VITE_API_URL}/api/messages/${username}`,
         {
           content: input,
           sender: user._id,

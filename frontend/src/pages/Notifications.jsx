@@ -6,7 +6,7 @@ const Notifications = () => {
     const [isLoading,setIsLoading] = useState(false)
     const getNotifications = async ()=>{
       setIsLoading(true)
-        const response =await fetch("http://localhost:3000/api/notifications/",{credentials: 'include' })
+        const response =await fetch("${import.meta.env.VITE_API_URL}/api/notifications/",{credentials: 'include' })
         const data = await response.json()
         console.log(data)
         if(response.ok){

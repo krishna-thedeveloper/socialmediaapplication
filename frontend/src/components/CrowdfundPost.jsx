@@ -25,7 +25,7 @@ const CrowdfundPost = ({ post, onDelete }) => {
 
     try {
       const response = await axios.post(
-        `http://localhost:3000/api/crowdfunds/donate/${post._id}`,
+        `${import.meta.env.VITE_API_URL}/api/crowdfunds/donate/${post._id}`,
         {
           amount,
           notes: {
@@ -70,7 +70,7 @@ const CrowdfundPost = ({ post, onDelete }) => {
 
     try {
       await axios.post(
-        "http://localhost:3000/api/reports/",
+        "${import.meta.env.VITE_API_URL}/api/reports/",
         {
           reportedBy: user._id,
           reportedCampaign: post._id,
@@ -90,7 +90,7 @@ const CrowdfundPost = ({ post, onDelete }) => {
   const handleDelete = async () => {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/api/crowdfunds/${post._id}`,
+        `${import.meta.env.VITE_API_URL}/api/crowdfunds/${post._id}`,
         { withCredentials: true }
       );
 

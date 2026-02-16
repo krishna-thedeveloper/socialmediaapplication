@@ -30,7 +30,7 @@ const Post = ({ post, setActiveCommentPostId, activeCommentPostId, onDelete }) =
     if (!reportReason) return alert("Please select a reason");
 
     try {
-      await axios.post("http://localhost:3000/api/reports/", {
+      await axios.post("${import.meta.env.VITE_API_URL}/api/reports/", {
         reportedBy: user._id,
         reportedPost: post._id,
         reason: reportReason,
@@ -47,7 +47,7 @@ const Post = ({ post, setActiveCommentPostId, activeCommentPostId, onDelete }) =
 
   const handleDelete = async () => {
     try {
-      const response = await axios.delete(`http://localhost:3000/api/posts/${post._id}`, {
+      const response = await axios.delete(`${import.meta.env.VITE_API_URL}/api/posts/${post._id}`, {
         withCredentials: true,
       });
 

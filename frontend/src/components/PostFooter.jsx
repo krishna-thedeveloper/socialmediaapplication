@@ -5,7 +5,7 @@ const PostFooter = ({Icon,text,pid,type,setViewCount,setLikeCount,setActiveComme
     // Handle Like functionality
     const handleLike = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/posts/like/${pid}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/posts/like/${pid}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

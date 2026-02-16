@@ -11,7 +11,7 @@ const CampaignDetails = () => {
     useEffect(() => {
         const fetchCampaign = async () => {
             try {
-                const response = await axios.get(`http://localhost:3000/api/crowdfunds/${id}`, {
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/crowdfunds/${id}`, {
                     withCredentials: true, // Include credentials
                 });
                 setCampaign(response.data);
@@ -25,7 +25,7 @@ const CampaignDetails = () => {
     const handleDonate = async () => {
         try {
             const response = await axios.post(
-                `http://localhost:3000/api/crowdfunds/donate/${id}`,
+                `${import.meta.env.VITE_API_URL}/api/crowdfunds/donate/${id}`,
                 { amount },
                 { withCredentials: true } // Include credentials
             );
